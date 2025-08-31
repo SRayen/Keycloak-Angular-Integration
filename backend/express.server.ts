@@ -2,11 +2,11 @@ import express, { Request, Response } from "express";
 import bodyParser from "body-parser";
 import cors from "cors";
 import { moviesData } from "./database/movies";
-
+import { keycloak } from "./middleware";
 
 const app = express();
-const port = 9090; 
-
+const port = 9090;
+const protectedRoutes = keycloak.protect();
 interface Movie {
   id: number;
   title: string;
@@ -20,7 +20,9 @@ app.use(
   cors({
     origin: true,
   }),
-  bodyParser.json()
+  bodyParser.json(),
+  keycloak.middleware(),
+  protectedRoutes
 );
 
 app.get("/getAllMovies", (req: Request, res: Response) => {
