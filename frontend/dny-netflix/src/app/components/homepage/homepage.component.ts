@@ -4,7 +4,8 @@ import { MovieService } from '../../services/movie.service';
 import { KeycloakOperationService } from '../../services/keycloak.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Movie } from '../../models/Movie';
+import { Movie } from '../../models/movie';
+
 
 @Component({
   selector: 'app-homepage',
