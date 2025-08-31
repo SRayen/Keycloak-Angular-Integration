@@ -5,6 +5,8 @@ import { KeycloakOperationService } from '../../services/keycloak.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Movie } from '../../models/movie';
+import { debounceTime } from 'rxjs/operators';
+import { Subject } from 'rxjs';
 
 @Component({
   selector: 'app-homepage',
@@ -19,6 +21,8 @@ export class HomepageComponent implements OnInit {
   userProfile: any | null = null;
   isTooltipVisible = false;
 
+  private searchSubject: Subject<string> = new Subject();
+
   constructor(
     private movieService: MovieService,
     private keyCloakService: KeycloakOperationService,
@@ -26,6 +30,18 @@ export class HomepageComponent implements OnInit {
   ) {}
   ngOnInit(): void {
     this.getAllMovies();
+
+    this.searchSubject.pipe(debounceTime(300)).subscribe((query) => {
+      this.movieService.searchMovies(query).subscribe(
+        (movies: Movie[]) => {
+          this.movies = movies;
+        },
+        (error: any) => {
+          this.handleError(error.error);
+        }
+      );
+    });
+
     this.keyCloakService.getUserProfile().then((data: any) => {
       this.userProfile = data;
       console.table(this.userProfile);
@@ -68,6 +84,8 @@ export class HomepageComponent implements OnInit {
     this.snackBar.open(message, 'Close', { duration: 5000 });
   }
   public onSearchChange(event: any) {
-    this.searchText = event.target.value;
+    const query = event.target.value;
+    this.searchText = query;
+    this.searchSubject.next(query);
   }
 }

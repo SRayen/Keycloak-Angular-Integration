@@ -39,6 +39,19 @@ app.get("/getMovieByID/:id", (req: Request, res: Response) => {
   }
 });
 
+app.get("/api/movies/search", (req: Request, res: Response) => {
+  const query = ((req.query.q as string) || "").toLowerCase();
+  if (!query) {
+    return res.json(movies);
+  }
+
+  const filtered = movies.filter((movie) =>
+    movie.title.toLowerCase().includes(query)
+  );
+
+  res.json(filtered);
+});
+
 app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);
 });

@@ -3,9 +3,6 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Movie } from '../models/movie';
 
-
-
-
 @Injectable({
   providedIn: 'root',
 })
@@ -18,5 +15,11 @@ export class MovieService {
   }
   getMovieById(id: number): Observable<Movie> {
     return this.http.get<Movie>(`${this.backendUrl}/getMovieByID/${id}`);
+  }
+
+  searchMovies(query: string) {
+    return this.http.get<Movie[]>(
+      `${this.backendUrl}/api/movies/search?q=${query}`
+    );
   }
 }
